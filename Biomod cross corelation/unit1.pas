@@ -135,7 +135,7 @@ var
 begin
      Chart1LineSeries1.Clear;
      Chart1LineSeries2.Clear;
-     Chart2LineSeries1.Clear;
+     //Chart2LineSeries1.Clear;
 
      trackPos:= TrackBar1.Position;
      Edit1.Text:=intToStr(trackPos);
@@ -147,9 +147,9 @@ begin
      end;
      for i:=0 to jumdat do
      begin
-       h[i]:=hd[i];
+       h[i]:=hds[i];
      end;
-     Korelasi;
+     //Korelasi;
 
 end;
 

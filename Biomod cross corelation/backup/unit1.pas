@@ -122,6 +122,10 @@ var
            rth[lag]:=sigma/jumdat;
            Chart2LineSeries1.AddXY(lag,rth[lag]);
        end;
+       for i:=0 to jumdat do
+       begin
+         h[i]:=hds[i];
+       end;
   end;
 
 procedure TForm1.TrackBar1Change(Sender: TObject);
@@ -131,7 +135,7 @@ var
 begin
      Chart1LineSeries1.Clear;
      Chart1LineSeries2.Clear;
-     Chart2LineSeries1.Clear;
+     //Chart2LineSeries1.Clear;
 
      trackPos:= TrackBar1.Position;
      Edit1.Text:=intToStr(trackPos);
@@ -145,7 +149,7 @@ begin
      begin
        h[i]:=hd[i];
      end;
-     Korelasi;
+     //Korelasi;
 
 end;
 
