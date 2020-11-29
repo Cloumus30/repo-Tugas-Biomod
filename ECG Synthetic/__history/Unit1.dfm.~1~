@@ -1,0 +1,231 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 458
+  ClientWidth = 835
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object PageControl1: TPageControl
+    Left = 0
+    Top = 8
+    Width = 833
+    Height = 449
+    ActivePage = TabSheet1
+    TabOrder = 0
+    object TabSheet1: TTabSheet
+      Caption = 'TabSheet1'
+      ExplicitLeft = 8
+      object Label1: TLabel
+        Left = 3
+        Top = 8
+        Width = 59
+        Height = 13
+        Caption = 'Jumlah Data'
+      end
+      object Label2: TLabel
+        Left = 3
+        Top = 35
+        Width = 11
+        Height = 13
+        Caption = 'Fs'
+      end
+      object Label3: TLabel
+        Left = 3
+        Top = 62
+        Width = 27
+        Height = 13
+        Caption = 'Tau 1'
+      end
+      object Label4: TLabel
+        Left = 3
+        Top = 89
+        Width = 27
+        Height = 13
+        Caption = 'Tau 2'
+      end
+      object Label5: TLabel
+        Left = 3
+        Top = 116
+        Width = 12
+        Height = 13
+        Caption = 'F1'
+      end
+      object Label6: TLabel
+        Left = 3
+        Top = 143
+        Width = 12
+        Height = 13
+        Caption = 'F2'
+      end
+      object Label7: TLabel
+        Left = 3
+        Top = 170
+        Width = 13
+        Height = 13
+        Caption = 'C1'
+      end
+      object Label8: TLabel
+        Left = 3
+        Top = 202
+        Width = 13
+        Height = 13
+        Caption = 'C2'
+      end
+      object Label9: TLabel
+        Left = 184
+        Top = 3
+        Width = 47
+        Height = 13
+        Caption = 'ratio Tau:'
+      end
+      object Label10: TLabel
+        Left = 237
+        Top = 3
+        Width = 6
+        Height = 13
+        Caption = '0'
+      end
+      object Button1: TButton
+        Left = 3
+        Top = 221
+        Width = 75
+        Height = 25
+        Caption = 'Mayers-RSA'
+        TabOrder = 0
+        OnClick = Button1Click
+      end
+      object Edit1: TEdit
+        Left = 68
+        Top = 5
+        Width = 97
+        Height = 21
+        TabOrder = 1
+        Text = '1000'
+      end
+      object Edit2: TEdit
+        Left = 68
+        Top = 32
+        Width = 97
+        Height = 21
+        TabOrder = 2
+        Text = '512'
+      end
+      object Chart1: TChart
+        Left = 312
+        Top = 0
+        Width = 409
+        Height = 198
+        Title.Text.Strings = (
+          'Mayers-RSA')
+        BottomAxis.Title.Caption = 'Frekuensi (Hz)'
+        LeftAxis.Title.Caption = 'Amplitude (mV)'
+        View3D = False
+        TabOrder = 3
+        DefaultCanvas = 'TGDIPlusCanvas'
+        ColorPaletteIndex = 13
+        object Series1: TLineSeries
+          Legend.Visible = False
+          ShowInLegend = False
+          Brush.BackColor = clDefault
+          Dark3D = False
+          Pointer.Draw3D = False
+          Pointer.InflateMargins = True
+          Pointer.Style = psRectangle
+          XValues.Name = 'X'
+          XValues.Order = loAscending
+          YValues.Name = 'Y'
+          YValues.Order = loNone
+        end
+      end
+      object Edit3: TEdit
+        Left = 68
+        Top = 59
+        Width = 97
+        Height = 21
+        TabOrder = 4
+        Text = '0'
+      end
+      object Edit4: TEdit
+        Left = 68
+        Top = 86
+        Width = 97
+        Height = 21
+        TabOrder = 5
+        Text = '0,1'
+      end
+      object Edit5: TEdit
+        Left = 68
+        Top = 114
+        Width = 97
+        Height = 21
+        TabOrder = 6
+        Text = '0,1'
+      end
+      object Edit6: TEdit
+        Left = 68
+        Top = 140
+        Width = 97
+        Height = 21
+        TabOrder = 7
+        Text = '0,25'
+      end
+      object Edit7: TEdit
+        Left = 68
+        Top = 167
+        Width = 97
+        Height = 21
+        TabOrder = 8
+        Text = '0,01'
+      end
+      object Edit8: TEdit
+        Left = 68
+        Top = 194
+        Width = 97
+        Height = 21
+        TabOrder = 9
+        Text = '0,01'
+      end
+      object TrackBar1: TTrackBar
+        Left = 171
+        Top = 58
+        Width = 135
+        Height = 22
+        TabOrder = 10
+        OnChange = TrackBar1Change
+      end
+      object TrackBar2: TTrackBar
+        Left = 171
+        Top = 86
+        Width = 135
+        Height = 22
+        TabOrder = 11
+        OnChange = TrackBar2Change
+      end
+      object ListBox1: TListBox
+        Left = 3
+        Top = 272
+        Width = 121
+        Height = 97
+        ItemHeight = 13
+        TabOrder = 12
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'TabSheet2'
+      ImageIndex = 1
+      ExplicitLeft = -12
+      ExplicitTop = -24
+      ExplicitWidth = 601
+      ExplicitHeight = 277
+    end
+  end
+end
