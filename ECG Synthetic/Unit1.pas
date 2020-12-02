@@ -35,7 +35,6 @@ type
     TrackBar1: TTrackBar;
     TrackBar2: TTrackBar;
     Series1: TLineSeries;
-    ListBox1: TListBox;
     Label9: TLabel;
     Label10: TLabel;
     Chart2: TChart;
@@ -52,12 +51,55 @@ type
     Label14: TLabel;
     Label15: TLabel;
     Edit9: TEdit;
+    GroupBox1: TGroupBox;
+    Label16: TLabel;
+    Label17: TLabel;
+    Label18: TLabel;
+    Label19: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
+    Label22: TLabel;
+    Label23: TLabel;
+    Edit11: TEdit;
+    Edit12: TEdit;
+    Edit13: TEdit;
+    Edit14: TEdit;
+    Edit15: TEdit;
+    Edit16: TEdit;
+    Edit17: TEdit;
+    Edit18: TEdit;
+    Edit19: TEdit;
+    Edit20: TEdit;
+    Edit21: TEdit;
+    Edit22: TEdit;
+    Edit23: TEdit;
+    Edit24: TEdit;
+    Edit25: TEdit;
+    Chart5: TChart;
+    Series5: TLineSeries;
+    Button3: TButton;
+    ListBox1: TListBox;
+    Series6: TLineSeries;
+    Series7: TLineSeries;
+    ListBox2: TListBox;
+    Edit26: TEdit;
+    Edit27: TEdit;
+    Label24: TLabel;
+    Label25: TLabel;
+    Label26: TLabel;
+    Label27: TLabel;
+    TabSheet1: TTabSheet;
     procedure Button1Click(Sender: TObject);
     procedure mayerrsa;
     procedure FormCreate(Sender: TObject);
     procedure TrackBar1Change(Sender: TObject);
     procedure TrackBar2Change(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure RungeKutta;
+    function Fungsi(fung:integer; x:extended; y:extended; z:extended;  t:extended):extended;
+    function modulo(xm:extended;ym:extended):extended;
+    procedure Button3Click(Sender: TObject);
+    function omega(input : real):real;
   private
     { Private declarations }
   public
@@ -66,24 +108,24 @@ type
 
 var
   Form1: TForm1;
-  fs,jumdat:integer;
+  fs,fsecg,jumecg,jumdat:integer;
   hrmean,offset,scal,fase,tau1,tau2,f1,f2,c1,c2:extended;
   sf:array[0..10000] of extended;
-  T:arrextend;
+  ai,bi,teta_i:array[0..4]of extended;
+  tacho,w:arrextend;
 
 
 implementation
 
 {$R *.dfm}
 
+// IDFT Function
 function IDFT (inpre:array of extended; inpim:array of extended; jumdata:integer):arrextend;
 var
   i,k:integer;
   re,im:extended;
   resim,resre,magspek:arrextend;
 begin
-//       xrei=xrei+xri[k]*(cos(2*pi*k*n/N))
-//	xrij=xrij+xij[k]*sin(2*pi*k*n/N)
     SetLength(resre,jumdata);
     SetLength(resim,jumdata);
     SetLength(magspek,jumdata);
@@ -107,18 +149,100 @@ begin
     result:=magspek;
 end;
 
+function modulus(a:extended; b:extended) : extended;
+begin
+  result:= a - b * Int(a / b);
+end;
+
+function Tform1.modulo(xm:extended;ym:extended):extended;
+begin
+  if abs(xm)<ym then begin
+    if xm<0 then result := xm+ym
+    else if xm>0 then result := xm
+    else if xm=0 then result := 0;
+  end
+  else if xm>0 then begin
+    while xm>ym do xm:= xm-ym;
+    result := xm;
+  end
+  else if xm<0 then begin
+    while xm<0 do xm:= xm+ym;
+    result := xm;
+  end;
+end;
+
+function TForm1.omega(input : real):real;
+var
+  i: integer;
+begin
+  i := floor(input/fs);
+//  ListBox2.items.Add(FloatToStr(2*pi/(T[i])));
+  omega := 2*pi/(tacho[i]);
+end;
+
+// 3D Space State Function
+function TForm1.Fungsi(fung:integer; x:extended; y:extended; z:extended; t:extended):extended;
+var
+  i:integer;
+  alfa,xdot,teta,z0,A,delTeta,sum,tetamin:extended;
+begin
+    alfa:=1-sqrt(sqr(x)+sqr(y));
+    if fung = 1  then //Fungsi xdot
+    begin
+      result:= alfa*x-omega(t)*y;
+//      result:= alfa*x-w*y;
+    end
+    else if fung = 2 then //Fungsi ydot
+    begin
+      result:= alfa*y+omega(t)*x;
+//      result:= alfa*y+w*x;
+    end
+    else if fung=3 then  //fungsi zdot
+    begin
+      A:=0.0015;
+      teta:=ArcTan2(y,x);
+//      teta:=2*arctan(y/(sqrt(sqr(x)+sqr(y))+x));
+      z0:= A*sin(2*pi*f2*t);
+      sum:=0;
+
+      for i:=0 to 4 do
+      begin
+        tetamin:=(teta-teta_i[i]);
+//        delTeta:= modulus(tetamin,2*pi);
+//        ListBox2.Items.Add('modulus: '+FloatToStr(delTeta));
+        delTeta:=modulo(tetamin,2*pi)-pi;
+//        ListBox1.Items.Add('modulo: '+FloatToStr(delTeta));
+
+        sum:=sum+-ai[i]*delTeta*exp(-0.5*sqr(delTeta)/sqr(bi[i]))-1*(z-z0);
+
+//        sum:=sum+ai[i]*delTeta*exp(-1*sqr(delTeta)/2*sqr(bi[i]))-1*(z-z0);
+//        ListBox1.Items.Add('ai : '+FloatToStr(ai[i]));
+//        ListBox1.Items.Add('bi : '+FloatToStr(bi[i]));
+//        ListBox1.Items.Add('teta i : '+FloatToStr(teta_i[i]));
+      end;
+//      sum := sum - 1*(z - z0);
+      result:=sum;
+    end
+    else
+    begin
+      result:=0;
+    end;
+end;
+
+// Button Mayers-RSA
 procedure TForm1.Button1Click(Sender: TObject);
 begin
    mayerrsa;
 end;
 
-//mayer rsa
+//Button RR-Tachogram
 procedure TForm1.Button2Click(Sender: TObject);
 var
   i:integer;
   sfre,sfim:arrextend;
 begin
     Series3.Clear;
+    Series4.Clear;
     scal:=StrToFloat(Edit10.Text);
     hrmean:=StrToFloat(edit9.Text);
     SetLength(sfre,jumdat);
@@ -129,21 +253,69 @@ begin
         sfre[i]:= sf[i]*cos(fase);
         sfim[i]:= sf[i]*sin(fase);
       end;
-    T:=IDFT(sfre,sfim,jumdat);
+    tacho:=IDFT(sfre,sfim,jumdat);
     for i := 0 to jumdat-1 do
       begin
-        Series3.AddXY(i,T[i]);
+        Series3.AddXY(i,tacho[i]);
       end;
+
     offset:= 60/hrmean;
-    ListBox1.Items.Add(FloatToStr(offset));
-    for i := 0 to jumdat do
+    Label13.Caption:=FloatToStr(offset);
+    for i := 0 to jumdat-1 do
       begin
-        T[i]:= (T[i]+offset);
-        Series4.AddXY(i,T[i]);
+        tacho[i]:= (tacho[i]*2)+offset;
+        Series4.AddXY(i,tacho[i]);
       end;
+    SetLength(w,Length(tacho));
+    for i := 0 to jumdat-1 do
+     begin
+        w[i]:=(2*pi)/tacho[i];
+     end;
+
+end;
+
+//ECG Button
+procedure TForm1.Button3Click(Sender: TObject);
+var
+  i:integer;
+begin
+// P
+  teta_i[0]:=StrToFloat(Edit11.Text)*pi/180;
+  ai[0]:=StrToFloat(Edit12.Text);
+  bi[0]:=StrToFloat(Edit13.Text);
+// Q
+  teta_i[1]:=StrToFloat(Edit14.Text)*pi/180;
+  ai[1]:=StrToFloat(Edit15.Text);
+  bi[1]:=StrToFloat(Edit16.Text);
+// R
+  teta_i[2]:=StrToFloat(Edit17.Text)*pi/180;
+  ai[2]:=StrToFloat(Edit18.Text);
+  bi[2]:=StrToFloat(Edit19.Text);
+// S
+  teta_i[3]:=StrToFloat(Edit20.Text)*pi/180;
+  ai[3]:=StrToFloat(Edit21.Text);
+  bi[3]:=StrToFloat(Edit22.Text);
+// T
+  teta_i[4]:=StrToFloat(Edit23.Text)*pi/180;
+  ai[4]:=StrToFloat(Edit24.Text);
+  bi[4]:=StrToFloat(Edit25.Text);
+
+  RungeKutta;
+//    omega(1);
+
+{  for i := 0 to 4 do
+    begin
+      ListBox1.Items.Add(FloatToStr(teta_i[i])+' '+FloatToStr(ai[i])+' '+FloatToStr(bi[i]));
+    end;}
+//    for i := 0 to jumdat-1 do
+//      begin
+//        ListBox1.Items.Add(FloatToStr(modulo()))
+//      end;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
+var
+  i:integer;
 begin
     TrackBar1.Max:=1000;
     TrackBar1.Min:=0;
@@ -151,9 +323,9 @@ begin
     TrackBar2.Max:=1000;
     TrackBar2.Min:=0;
 
-
 end;
 
+// Mayers RSA Procedure
 procedure TForm1.mayerrsa;
 var
   i:integer;
@@ -178,7 +350,6 @@ begin
            f:=i/jumdat;
            sf[i]:=sqr(tau1)/sqrt(2*pi*sqr(c1))*exp(-1*sqr(f-f1)/(2*sqr(c1)))+
                  sqr(tau2)/sqrt(2*pi*sqr(c2))*exp(-1*sqr(f-f2)/(2*sqr(c2)));
-      //     ListBox1.items.add(FloatToStr(sf[i]));
            Series1.addXY(f,sf[i]);
            sf[i]:=sqrt(sf[i]);
        end;
@@ -193,12 +364,70 @@ begin
     Button2.Enabled:=True;
 end;
 
+// Prosedur RungeKutta
+procedure TForm1.RungeKutta;
+var
+  wind,i:integer;
+  x,y,z,alfa,h:extended;
+  RK4x,RK4y,RK4z:arrextend;
+  kx,ky,kz:array[1..5] of extended;
+begin
+    Series5.Clear;
+    Series6.Clear;
+    Series7.Clear;
+    fsecg:=StrToInt(Edit26.Text);
+    jumecg:= StrToInt(Edit27.Text)*fsecg;
+    Label27.Caption:=IntToStr(jumecg);
+    SetLength(RK4x,jumecg);
+    SetLength(RK4y,jumecg);
+    SetLength(RK4z,jumecg);
+    wind:=0;
+    RK4x[0] := 0.1;
+    Rk4y[0] := 0.0;
+    Rk4z[0] := 0.0;
+    h:=1/fsecg;
+
+    for i := 0 to jumecg-1 do
+      begin
+//      ListBox1.Items.Add(FloatToStr(w[1]));
+        kx[1]:=Fungsi(1,RK4x[i],RK4y[i],RK4z[i],i/fs);
+        ky[1]:=Fungsi(2,RK4x[i],RK4y[i],RK4z[i],i/fs);
+        kz[1]:=Fungsi(3,RK4x[i],RK4y[i],RK4z[i],i/fs);
+
+        kx[2]:=Fungsi(1,RK4x[i]+(0.5*(h)),RK4y[i]+(0.5*(h)),RK4z[i]+(0.5*(h)),i/fs);
+        ky[2]:=Fungsi(2,RK4x[i]+(0.5*(h)),RK4y[i]+(0.5*(h)),RK4z[i]+(0.5*(h)),i/fs);
+        kz[2]:=Fungsi(3,RK4x[i]+(0.5*(h)),RK4y[i]+(0.5*(h)),RK4z[i]+(0.5*(h)),i/fs);
+
+        kx[3]:=Fungsi(1,RK4x[i]+(0.5*(h)),RK4y[i]+(0.5*(h)),RK4z[i]+(0.5*(h)),i/fs);
+        ky[3]:=Fungsi(2,RK4x[i]+(0.5*(h)),RK4y[i]+(0.5*(h)),RK4z[i]+(0.5*(h)),i/fs);
+        kz[3]:=Fungsi(3,RK4x[i]+(0.5*(h)),RK4y[i]+(0.5*(h)),RK4z[i]+(0.5*(h)),i/fs);
+
+        kx[4]:=Fungsi(1,RK4x[i]+h,RK4y[i]+h,RK4z[i]+h,i/fs);
+        ky[4]:=Fungsi(2,RK4x[i]+h,RK4y[i]+h,RK4z[i]+h,i/fs);
+        kz[4]:=Fungsi(3,RK4x[i]+h,RK4y[i]+h,RK4z[i]+h,i/fs);
+
+        RK4x[i+1]:=RK4x[i]+(h/6)*(kx[1]+2*kx[2]+2*kx[3]+kx[4]);
+        RK4y[i+1]:=RK4y[i]+(h/6)*(ky[1]+2*ky[2]+2*ky[3]+ky[4]);
+        RK4z[i+1]:=RK4z[i]+(h/6)*(kz[1]+2*kz[2]+2*kz[3]+kz[4]);
+
+//        Series5.AddXY(i/fs,RK4x[i]);
+//        Series6.AddXY(i/fs,RK4y[i]);
+        Series7.AddXY(i,RK4z[i]);
+
+        wind:=wind+round(i/fs);
+
+      end;
+
+end;
+
+// Tau 1 TrackBar
 procedure TForm1.TrackBar1Change(Sender: TObject);
 begin
     Edit3.Text:=FloatToStr(TrackBar1.Position/1000);
     mayerrsa;
 end;
 
+// Tau 2 TrackBar
 procedure TForm1.TrackBar2Change(Sender: TObject);
 begin
      Edit4.Text:=FloatToStr(TrackBar2.Position/1000);
