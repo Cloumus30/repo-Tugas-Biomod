@@ -89,6 +89,40 @@ type
     Label26: TLabel;
     Label27: TLabel;
     TabSheet1: TTabSheet;
+    GroupBox2: TGroupBox;
+    Label28: TLabel;
+    Label29: TLabel;
+    Label30: TLabel;
+    Label31: TLabel;
+    Label32: TLabel;
+    Label33: TLabel;
+    Label34: TLabel;
+    Label35: TLabel;
+    Edit28: TEdit;
+    Edit29: TEdit;
+    Edit30: TEdit;
+    Edit31: TEdit;
+    Edit32: TEdit;
+    Edit33: TEdit;
+    Edit34: TEdit;
+    Edit35: TEdit;
+    Edit36: TEdit;
+    Edit37: TEdit;
+    Edit38: TEdit;
+    Edit39: TEdit;
+    Edit40: TEdit;
+    Edit41: TEdit;
+    Edit42: TEdit;
+    Label36: TLabel;
+    Edit43: TEdit;
+    Label37: TLabel;
+    Label38: TLabel;
+    Edit44: TEdit;
+    Button4: TButton;
+    Chart6: TChart;
+    Label39: TLabel;
+    Series8: TLineSeries;
+    CheckBox1: TCheckBox;
     procedure Button1Click(Sender: TObject);
     procedure mayerrsa;
     procedure FormCreate(Sender: TObject);
@@ -100,6 +134,7 @@ type
     function modulo(xm:extended;ym:extended):extended;
     procedure Button3Click(Sender: TObject);
     function omega(input : real):real;
+    procedure CheckBox1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -313,6 +348,18 @@ begin
 //      end;
 end;
 
+procedure TForm1.CheckBox1Click(Sender: TObject);
+begin
+    if CheckBox1.Checked then
+    begin
+      ListBox1.Items.Add('checked');
+    end
+    else
+    begin
+      ListBox1.Items.Add('unchecked');
+    end;
+end;
+
 procedure TForm1.FormCreate(Sender: TObject);
 var
   i:integer;
@@ -412,7 +459,7 @@ begin
 
 //        Series5.AddXY(i/fs,RK4x[i]);
 //        Series6.AddXY(i/fs,RK4y[i]);
-        Series7.AddXY(i,RK4z[i]);
+        Series7.AddXY(i/fs,RK4z[i]);
 
         wind:=wind+round(i/fs);
 

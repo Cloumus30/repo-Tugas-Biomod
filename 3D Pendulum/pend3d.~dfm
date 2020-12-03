@@ -1,0 +1,184 @@
+object Form1: TForm1
+  Left = 191
+  Top = 146
+  Width = 928
+  Height = 480
+  HorzScrollBar.Position = 441
+  VertScrollBar.Position = 242
+  Caption = '3D Upper Limb Model'
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnResize = FormResize
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Button1: TButton
+    Left = 311
+    Top = 406
+    Width = 75
+    Height = 25
+    Caption = 'Upper Limb'
+    TabOrder = 0
+    OnClick = Button1Click
+  end
+  object Chart1: TChart
+    Left = 503
+    Top = 158
+    Width = 400
+    Height = 250
+    BackWall.Brush.Color = clWhite
+    BackWall.Brush.Style = bsClear
+    Title.Text.Strings = (
+      '')
+    Title.Visible = False
+    Legend.LegendStyle = lsValues
+    View3D = False
+    TabOrder = 1
+    object Series1: TLineSeries
+      Marks.ArrowLength = 8
+      Marks.Visible = False
+      SeriesColor = clRed
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      Pointer.Visible = False
+      XValues.DateTime = False
+      XValues.Name = 'X'
+      XValues.Multiplier = 1.000000000000000000
+      XValues.Order = loAscending
+      YValues.DateTime = False
+      YValues.Name = 'Y'
+      YValues.Multiplier = 1.000000000000000000
+      YValues.Order = loNone
+    end
+    object Series2: TLineSeries
+      Marks.ArrowLength = 8
+      Marks.Visible = False
+      SeriesColor = clGreen
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      Pointer.Visible = False
+      XValues.DateTime = False
+      XValues.Name = 'X'
+      XValues.Multiplier = 1.000000000000000000
+      XValues.Order = loAscending
+      YValues.DateTime = False
+      YValues.Name = 'Y'
+      YValues.Multiplier = 1.000000000000000000
+      YValues.Order = loNone
+    end
+  end
+  object Button2: TButton
+    Left = 391
+    Top = 406
+    Width = 75
+    Height = 25
+    Caption = 'Stop'
+    TabOrder = 2
+    OnClick = Button2Click
+  end
+  object Button3: TButton
+    Left = 231
+    Top = 406
+    Width = 75
+    Height = 25
+    Caption = 'Basics'
+    TabOrder = 3
+    OnClick = Button3Click
+  end
+  object GroupBox1: TGroupBox
+    Left = 337
+    Top = 294
+    Width = 121
+    Height = 105
+    Caption = 'Angle Control'
+    TabOrder = 4
+    object Label1: TLabel
+      Left = 16
+      Top = 24
+      Width = 24
+      Height = 13
+      Caption = 'Pitch'
+    end
+    object Label2: TLabel
+      Left = 16
+      Top = 40
+      Width = 21
+      Height = 13
+      Caption = 'Yaw'
+    end
+    object Label3: TLabel
+      Left = 16
+      Top = 60
+      Width = 18
+      Height = 13
+      Caption = 'Roll'
+    end
+    object SpinEdit1: TSpinEdit
+      Left = 48
+      Top = 19
+      Width = 57
+      Height = 22
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 0
+      Value = 0
+      OnChange = SpinEdit1Change
+    end
+    object SpinEdit2: TSpinEdit
+      Left = 48
+      Top = 40
+      Width = 57
+      Height = 22
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 1
+      Value = 0
+      OnChange = SpinEdit2Change
+    end
+    object SpinEdit3: TSpinEdit
+      Left = 48
+      Top = 64
+      Width = 57
+      Height = 22
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 2
+      Value = 0
+      OnChange = SpinEdit3Change
+    end
+  end
+  object Button5: TButton
+    Left = 465
+    Top = 407
+    Width = 75
+    Height = 25
+    Caption = 'Cylinder'
+    TabOrder = 5
+    OnClick = Button5Click
+  end
+  object Timer1: TTimer
+    Enabled = False
+    Interval = 1
+    OnTimer = Timer1Timer
+    Left = 1088
+    Top = 640
+  end
+  object Timer2: TTimer
+    Interval = 1
+    OnTimer = Timer2Timer
+    Left = 1056
+    Top = 640
+  end
+  object Timer3: TTimer
+    Enabled = False
+    Interval = 1
+    Left = 1024
+    Top = 640
+  end
+end
