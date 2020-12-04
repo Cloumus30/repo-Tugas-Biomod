@@ -6,18 +6,55 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls,
   VclTee.TeeGDIPlus, VCLTee.TeEngine, VCLTee.Series, Vcl.ExtCtrls,
-  VCLTee.TeeProcs, VCLTee.Chart;
+  VCLTee.TeeProcs, VCLTee.Chart, Vcl.Grids;
 
 type
 arrextend = array of extended;
+arr2d=array of array of extended;
   TForm1 = class(TForm)
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     ListBox1: TListBox;
     Chart1: TChart;
-    Series1: TLineSeries;
+    inputseries: TLineSeries;
+    Button1: TButton;
+    Edit1: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    ListBox3: TListBox;
+    Label4: TLabel;
+    StringGrid1: TStringGrid;
+    StringGrid2: TStringGrid;
+    Label5: TLabel;
+    Label6: TLabel;
+    Chart2: TChart;
+    Chart4: TChart;
+    PredictionSeries: TLineSeries;
+    A_omegaSeries: TLineSeries;
+    Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
+    errorSeries: TLineSeries;
+    Button5: TButton;
+    Button6: TButton;
+    ListBox4: TListBox;
+    ListBox5: TListBox;
+    H_omegaSeries: TLineSeries;
+    ListBox2: TListBox;
     procedure FormCreate(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure autocorrelation;
+    procedure buildMatrix;
+    procedure ErrorExitator;
+    procedure PredictionSignal;
+    procedure ResponseFrequency;
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -27,36 +64,281 @@ arrextend = array of extended;
 var
   Form1: TForm1;
   inp: array[0..10000] of extended;
-  datInp:arrextend;
-  jumdat:integer;
+  rxx,datInp:array[-10000..10000] of extended;
+  matrixInv,matrix:arr2d;
+  coefPredic,predicValue,errExitator,PredicSig,jumReal,hReal,hImaj,A_Omega,H_Omega:arrextend;
+  jumdat,jumTimeLag:integer;
+
 
 implementation
 
 {$R *.dfm}
+//=============== Inverse Function ===================
+function Inverse(Mat:arr2d):arr2d;
+var
+  i,j,k,num: integer;
+  c: real;
+  Inv : arr2d;
+begin
+  num := length(Mat);
+  num:=num-1;
+  setlength(Inv,num,num);
+  for i := 0 to num-1 do for j := 0 to num-1 do if i=j then Inv[i,j]:=1 else Inv[i,j] :=0;
 
+  for k := 0 to num-1 do
+  begin
+    c := Mat[k,k];
+    for j:=0 to num-1 do
+    begin
+      Mat[k,j]:=Mat[k,j]/c;
+      Inv[k,j]:=Inv[k,j]/c;
+    end;
+
+    for i:=0 to num-1 do
+    begin
+      if i<>k then
+      begin
+        c:=Mat[i,k];
+        for j:=0 to num-1 do
+        begin
+          Mat[i,j]:=Mat[i,j]-c*Mat[k,j];
+          Inv[i,j]:=Inv[i,j]-c*Inv[k,j];
+        end;
+      end;
+    end;
+  end;
+  result := Inv;
+end;
+
+//=============== AutoCorrelation Button ===================
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+    autocorrelation;
+    Button2.Enabled:=True;
+end;
+
+//=============== Matrix and Inverse Button ===================
+procedure TForm1.Button2Click(Sender: TObject);
+var
+  i,j:integer;
+begin
+    buildMatrix;
+    matrixInv:=Inverse(matrix);
+    for i := 0 to Length(matrixInv)-1 do
+    begin
+      for j := 0 to Length(matrixInv)-1 do
+        begin
+          StringGrid2.Cells[i,j]:=floatToStr(matrixInv[i,j]);
+        end;
+    end;
+     Button3.Enabled:=True;
+end;
+
+//=============== Predictor Coefficient Button ===================
+procedure TForm1.Button3Click(Sender: TObject);
+var
+  i,j:integer;
+  sum:extended;
+begin
+    SetLength(coefPredic,jumTimeLag);
+    for i := 0 to jumTimeLag-1 do
+      begin    
+        sum:=0; 
+        for j := 0 to jumTimeLag-1 do
+          begin
+            sum:=sum+matrixInv[i,j]*rxx[j+1];
+          end;
+          coefPredic[i]:=sum;
+          ListBox2.Items.Add('a['+IntToStr(i)+'] : '+FloatToStr(coefPredic[i]));
+      end;
+      button4.Enabled:=True;
+end;
+
+//=============== Error Exitator Button ===================
+procedure TForm1.Button4Click(Sender: TObject);
+var
+  i:integer;
+begin
+    ErrorExitator;
+    errorSeries.Clear;
+    for i := 0 to jumdat-1 do
+      begin
+        errorSeries.AddXY(i,errExitator[i]);
+      end;
+    button6.Enabled:=True;
+end;
+
+//=============== Response Frequency Button ===================
+procedure TForm1.Button5Click(Sender: TObject);
+begin
+  ResponseFrequency;
+end;
+
+//=============== Prediction Signal Button ===================
+procedure TForm1.Button6Click(Sender: TObject);
+begin
+  PredictionSignal;
+  button5.Enabled:=True;
+end;
+
+//=============== Form Create Procedure ===================
 procedure TForm1.FormCreate(Sender: TObject);
 var
   txtFile: TextFile;
   i,j:integer;
 begin
-        AssignFile(txtFile,'D:\Temp\lazarus\repo Tugas Biomod\Linear Prediction Program\PCG.txt');
+        AssignFile(txtFile, 'D:\kuliah\Tugas Program\repo Tugas Biomod\Linear Prediction Program\PCG.txt');
         Reset(txtFile);
         i:=0;
         while not Eof(txtFile) do
         begin
-            Readln(txtFile,inp[i],inp[i]);
-            Series1.AddXY(i,inp[i]);
+            Readln(txtFile,datinp[i],datinp[i]);
+            inputseries.AddXY(i,datinp[i]);
             Inc(i);
         end;
         CloseFile(txtFile);
         jumdat:=i;
 
-        setLength(datInp,jumdat);
-        for i := 0 to jumdat-1 do
-          begin
-              datInp[i]:= inp[i];
-          end;
+//        setLength(datInp,jumdat);
+//        for i := 0 to jumdat-1 do
+//          begin
+//              datInp[i]:= inp[i];
+//          end;
+        jumTimeLag:=StrToInt(Edit1.Text);
+        StringGrid1.ColCount:=jumTimeLag;
+        StringGrid1.RowCount:=jumTimeLag;
+
+        StringGrid2.ColCount:=jumTimeLag;
+        StringGrid2.RowCount:=jumTimeLag;
 
 end;
 
+//=============== AutoCorrelation procedure ===================
+procedure TForm1.autocorrelation;
+var
+  i,j:integer;
+  sum:extended;
+begin
+    jumTimeLag:=StrToInt(Edit1.Text);
+    StringGrid1.ColCount:=jumTimeLag;
+    StringGrid1.RowCount:=jumTimeLag;
+
+    StringGrid2.ColCount:=jumTimeLag;
+    StringGrid2.RowCount:=jumTimeLag;
+//    SetLength(rxx,2*jumTimeLag);
+    for i:=0 to jumTimeLag do
+    begin
+        sum:=0;
+        for j:=0 to jumdat-1 do
+        begin
+            sum:=sum+ datInp[j]*datInp[j-i];
+        end;
+        rxx[i]:=sum;
+        rxx[-i]:=rxx[i];
+//        series2.AddXY(i,rxx[i]);
+        ListBox1.Items.Add('rxx['+IntToStr(i)+']: '+FloatToStr(rxx[i]));
+    end;
+
+end;
+
+//=============== Building Matrix Procedure ===================
+procedure TForm1.buildMatrix;
+var
+  i,k:integer;
+begin
+    setLength(matrix,jumTimeLag+1,jumTimeLag+1);
+    for i:=1 to jumTimeLag do //col
+    begin
+        for k:=1 to jumTimeLag do //row
+        begin
+            matrix[i,k]:=rxx[(i-1)-(k-1)]; //matrix[col,row]
+//            StringGrid1.Cells[i-1,k-1]:=FloatToStr(matrix[i,k]);
+        end;
+    end;
+
+    for i := 0 to jumTimeLag-1 do
+      begin
+        for k := 0 to JumTimeLag-1 do
+          begin
+            matrix[i,k]:=matrix[i+1,k+1];
+            StringGrid1.Cells[i,k]:=FloatToStr(matrix[i,k]);
+          end;
+      end;
+end;
+
+//=============== Error Exitator Procedure ===================
+procedure TForm1.ErrorExitator;
+var
+  i,k:integer;
+  sum:extended;
+begin
+// Loop Predictor Value (x'(m))
+    setLength(predicValue,jumdat);
+    for i := 0 to jumdat-1 do
+      begin
+        sum:=0;
+        for k := 0 to jumTimeLag-1 do
+        begin
+          sum:=sum+ coefPredic[k]*datInp[i-k];
+        end;
+        predicValue[i]:=sum;  
+      end;
+      
+// Loop Error Exitator
+    setLength(errExitator,jumdat);
+    for i := 0 to jumdat-1 do
+      begin
+        errExitator[i]:=datInp[i]-predicValue[i];
+        ListBox3.Items.Add('e['+IntToStr(i)+'] : '+FloatToStr(errExitator[i]));
+      end;
+end;
+
+//=============== Prediction Signal Procedure ===================
+procedure TForm1.PredictionSignal;
+var
+  i:integer;
+begin
+    PredictionSeries.Clear;
+    setLength(PredicSig,jumdat);
+   for i := 0 to jumdat-1 do
+     begin
+        PredicSig[i]:= predicValue[i]+errExitator[i];
+        PredictionSeries.AddXY(i,PredicSig[i]);
+     end;
+      
+end;
+
+//=============== Response Frequency Signal Procedure ===================
+procedure TForm1.ResponseFrequency;
+var
+  i,j:integer;
+  tempReal,tempImaj:extended;
+begin
+    A_omegaSeries.Clear;
+    H_omegaSeries.Clear;
+    setLength(jumReal,jumdat);
+    setLength(hReal,jumdat);
+    setLength(hImaj,jumdat);
+    setLength(A_omega,jumdat);
+    setLength(H_omega,jumdat);
+    for i:=0 to jumdat-1 do
+    begin
+      tempReal:=0;
+      tempImaj:=0;
+      for j:=0 to JumTimeLag-1 do
+        begin
+          jumReal[i]:=tempReal-predicValue[j]*cos(i*pi*j/jumdat);
+          tempReal:= jumReal[i];
+          hReal[i]:=1-jumReal[i];
+
+          hImaj[i]:= tempImaj+predicValue[j]*sin(i*pi*j/jumdat);
+          tempImaj:= hImaj[i];
+        end;
+      A_omega[i]:=sqrt(sqr(hReal[i])+sqr(hImaj[i])); //inverse Filter?
+      H_omega[i]:=1/A_omega[i]; //Predictor
+      //plot A_omega, h_omega terhadap i/jumdat
+      A_omegaSeries.AddXY(i/jumdat,A_omega[i]);
+      H_omegaSeries.AddXY(i/jumdat,H_omega[i]);
+    end;  
+end;
 end.

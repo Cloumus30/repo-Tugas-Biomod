@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
-  <Transactions>
-    <Transaction>2020/12/03 15:58:47.714,=C:\Users\Cloudias\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2020/12/03 15:59:28.290,D:\Temp\lazarus\repo Tugas Biomod\Linear Prediction Program\Unit1.dfm=C:\Users\Cloudias\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
-    <Transaction>2020/12/03 15:59:28.290,D:\Temp\lazarus\repo Tugas Biomod\Linear Prediction Program\Unit1.pas=C:\Users\Cloudias\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2020/12/03 15:59:31.192,D:\Temp\lazarus\repo Tugas Biomod\Linear Prediction Program\Project1.dproj=C:\Users\Cloudias\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+	<Transactions>
+    <Transaction>2020/12/03 15:58:47.000.714,=C:\Users\Cloudias\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/12/03 15:59:28.000.290,D:\Temp\lazarus\repo Tugas Biomod\Linear Prediction Program\Unit1.dfm=C:\Users\Cloudias\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2020/12/03 15:59:28.000.290,D:\Temp\lazarus\repo Tugas Biomod\Linear Prediction Program\Unit1.pas=C:\Users\Cloudias\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/12/03 15:59:31.000.192,D:\Temp\lazarus\repo Tugas Biomod\Linear Prediction Program\Project1.dproj=C:\Users\Cloudias\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
   </Transactions>
 </BorlandProject>
