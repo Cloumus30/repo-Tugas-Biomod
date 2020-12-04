@@ -312,7 +312,7 @@ end;
 procedure TForm1.ResponseFrequency;
 var
   i,j:integer;
-  tempReal,tempImaj:extended;
+  tempReal,tempImaj,sumReal,sumImaj:extended;
 begin
     A_omegaSeries.Clear;
     H_omegaSeries.Clear;
@@ -321,24 +321,38 @@ begin
     setLength(hImaj,jumdat);
     setLength(A_omega,jumdat);
     setLength(H_omega,jumdat);
-    for i:=0 to jumdat-1 do
-    begin
-      tempReal:=0;
-      tempImaj:=0;
-      for j:=0 to JumTimeLag-1 do
-        begin
-          jumReal[i]:=tempReal-predicValue[j]*cos(i*pi*j/jumdat);
-          tempReal:= jumReal[i];
-          hReal[i]:=1-jumReal[i];
-
-          hImaj[i]:= tempImaj+predicValue[j]*sin(i*pi*j/jumdat);
-          tempImaj:= hImaj[i];
-        end;
-      A_omega[i]:=sqrt(sqr(hReal[i])+sqr(hImaj[i])); //inverse Filter?
-      H_omega[i]:=1/A_omega[i]; //Predictor
-      //plot A_omega, h_omega terhadap i/jumdat
-      A_omegaSeries.AddXY(i/jumdat,A_omega[i]);
-      H_omegaSeries.AddXY(i/jumdat,H_omega[i]);
-    end;  
+    for i := 0 to jumdat-1 do
+      begin
+        sumReal:=0;
+        sumImaj:=0;
+        for j := 1 to jumTimeLag do
+          begin
+             sumReal:= sumReal - coefPredic[j-1]*cos(i*pi*j/jumdat);
+             sumImaj:= sumImaj + coefPredic[j-1]*sin(i*pi*j/jumdat);
+          end;
+          A_omega[i]:=sqrt(sqr(1-sumReal)+sqr(sumImaj)); //inverse Filter?
+          H_omega[i]:=1/A_omega[i]; //Predictor
+          A_omegaSeries.AddXY(i/jumdat,A_omega[i]);
+          H_omegaSeries.AddXY(i/jumdat,H_omega[i]);
+      end;
+//    for i:=0 to jumdat-1 do
+//    begin
+//      tempReal:=0;
+//      tempImaj:=0;
+//      for j:=1 to JumTimeLag do
+//        begin
+//          jumReal[i]:=tempReal-coefPredic[j-1]*cos(i*pi*j/jumdat);
+//          tempReal:= jumReal[i];
+//          hReal[i]:=1-jumReal[i];
+//
+//          hImaj[i]:= tempImaj+coefPredic[j-1]*sin(i*pi*j/jumdat);
+//          tempImaj:= hImaj[i];
+//        end;
+//      A_omega[i]:=sqrt(sqr(hReal[i])+sqr(hImaj[i])); //inverse Filter?
+//      H_omega[i]:=1/A_omega[i]; //Predictor
+//      //plot A_omega, h_omega terhadap i/jumdat
+//      A_omegaSeries.AddXY(i/jumdat,A_omega[i]);
+//      H_omegaSeries.AddXY(i/jumdat,H_omega[i]);
+//    end;
 end;
 end.
