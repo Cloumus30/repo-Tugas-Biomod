@@ -1,0 +1,168 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, opengl,
+  ExtCtrls, StdCtrls, Spin, VclTee.TeeGDIPlus;
+
+type
+  TForm1 = class(TForm)
+    procedure FormCreate(Sender: TObject);
+  private
+    { Private declarations }
+
+     { Private-Deklarationen }
+   myDC : HDC;
+   myRC : HGLRC;
+   myPalette : HPALETTE;
+   procedure SetupPixelFormat;
+
+  public
+    { Public declarations }
+  end;
+
+const
+mat_specular : array [0..3] of GLfloat = ( 8.0, 8.0, 1.0, 0.0 );
+mat_shininess : GLfloat = 40.0;
+light_position : array [0..3] of GLfloat = ( 120.6, 14.0, 41.0, 10.7 );
+
+
+  f0=1.0;
+  f1=0.5;
+  f2=0.5;
+  f3=0.5;
+
+var
+  Form1: TForm1;
+   rotangle,rotangle1,rotangle2,rotangle3:real;
+  xpos,ypos,zpos:real;
+  circlepoint:integer;
+  angle:real;
+  Sphere,cylinder,disk,partialdisk: GLUquadricObj;
+  time:extended;
+  fix_x,upperlimb,twoupper,cyl:boolean;
+  thetadotdot,thetadot,theta,phidotdot,phidot,phi:real;
+  torque,torque1,m,l,g,mint:real;
+  k1,k2,k3,k4,dt,k11,k21,k31,k41:real;
+  pitch,yaw,roll:real;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+
+  theta:=30*pi/180;
+  phi:=20*pi/180;
+  thetadot:=0;
+  phidot:=0;
+
+  form1.myDC:= GetDC(Handle);
+  SetupPixelFormat;
+  myRC:= wglCreateContext(myDC);
+  wglMakeCurrent(myDC, myRC);
+  glEnable(GL_DEPTH_TEST);
+  glLoadIdentity;
+
+    glClearColor(0.0, 0.0, 0.0, 1.0); 	   // Black Background
+    glShadeModel(GL_SMOOTH);                 // Enables Smooth Color Shading
+    glClearDepth(1.0);                       // Depth Buffer Setup
+    glEnable(GL_DEPTH_TEST);                 // Enable Depth Buffer
+    glDepthFunc(GL_LESS);		           // The Type Of Depth Test To Do
+
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+    glEnable(GL_TEXTURE_2D);
+
+    Sphere := gluNewQuadric();
+    cylinder:= gluNewQuadric();
+    disk:=glunewquadric();
+    partialdisk:=glunewquadric();
+    gluQuadricNormals(Sphere, GLU_SMOOTH);   // Create Smooth Normals
+    gluQuadricNormals(cylinder, GLU_SMOOTH);   // Create Smooth Normals
+    gluQuadricNormals(disk, GLU_SMOOTH);   // Create Smooth Normals
+
+    glMaterialfv(GL_FRONT, GL_SPECULAR, @mat_specular);
+    glMaterialfv(GL_BACK, GL_SPECULAR, @mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, @mat_shininess);
+     glMaterialfv(GL_BACK, GL_SHININESS, @mat_shininess);
+    glLightfv(GL_LIGHT0, GL_POSITION, @light_position);
+    glLightfv(GL_LIGHT3, GL_SPECULAR, @mat_specular);
+    glLightfv(GL_LIGHT1, GL_POSITION, @light_position);
+     glLightfv(GL_LIGHT2, GL_POSITION, @light_position);
+
+    glEnable(GL_LIGHTING);
+     glEnable(GL_LIGHT0);
+      glEnable(GL_LIGHT1);
+       glEnable(GL_LIGHT2);
+         glEnable(GL_LIGHT3);
+    glDepthFunc(GL_LEQUAL);
+
+  rotangle:=0;
+  rotangle1:=0;
+  rotangle2:=0;
+  rotangle3:=0;
+  xpos:=-5;
+  ypos:=0;
+  zpos:=-10;
+end;
+
+procedure glBindTexture(target: GLenum; texture: GLuint);
+stdcall; external opengl32;
+procedure TForm1.SetupPixelFormat;
+var    hHeap: THandle;
+  nColors, i: Integer;
+  lpPalette : PLogPalette;
+  byRedMask, byGreenMask, byBlueMask: Byte;
+  nPixelFormat: Integer;
+  pfd: TPixelFormatDescriptor;
+begin
+  FillChar(pfd, SizeOf(pfd), 0);
+  with pfd do begin
+    nSize     := sizeof(pfd);               // Länge der pfd-Struktur
+    nVersion  := 1;                         // Version
+    dwFlags   := PFD_DRAW_TO_WINDOW or PFD_SUPPORT_OPENGL or
+                 PFD_DOUBLEBUFFER;          // Flags
+    iPixelType:= PFD_TYPE_RGBA;             // RGBA Pixel Type
+    cColorBits:= 32;                        // 32-bit color
+    cDepthBits:= 32;                        // 32-bit depth buffer
+    iLayerType:= PFD_MAIN_PLANE;            // Layer Type
+  end;
+  nPixelFormat:= ChoosePixelFormat(myDC, @pfd);
+  SetPixelFormat(myDC, nPixelFormat, @pfd);
+                                            // Farbpalettenoptimierung wenn erforderlich
+  DescribePixelFormat(myDC, nPixelFormat,
+                      sizeof(TPixelFormatDescriptor),pfd);
+  if ((pfd.dwFlags and PFD_NEED_PALETTE) <> 0) then begin
+    nColors  := 1 shl pfd.cColorBits;
+    hHeap    := GetProcessHeap;
+    lpPalette:= HeapAlloc
+       (hHeap,0,sizeof(TLogPalette)+(nColors*sizeof(TPaletteEntry)));
+    lpPalette^.palVersion := $300;
+    lpPalette^.palNumEntries := nColors;
+    byRedMask  := (1 shl pfd.cRedBits) - 1;
+    byGreenMask:= (1 shl pfd.cGreenBits) - 1;
+    byBlueMask := (1 shl pfd.cBlueBits) - 1;
+   for i := 0 to nColors - 1 do begin
+      lpPalette^.palPalEntry[i].peRed  :=
+        (((i shr pfd.cRedShift)  and byRedMask)  *255)DIV byRedMask;
+      lpPalette^.palPalEntry[i].peGreen:=
+        (((i shr pfd.cGreenShift)and byGreenMask)*255)DIV byGreenMask;
+      lpPalette^.palPalEntry[i].peBlue :=
+        (((i shr pfd.cBlueShift) and byBlueMask) *255)DIV byBlueMask;
+      lpPalette^.palPalEntry[i].peFlags:= 0;
+    end;
+    myPalette:= CreatePalette(lpPalette^);
+    HeapFree(hHeap, 0, lpPalette);
+    if (myPalette <> 0) then begin
+      SelectPalette(myDC, myPalette, False);
+      RealizePalette(myDC);
+    end;
+  end;
+end;
+
+
+
+end.

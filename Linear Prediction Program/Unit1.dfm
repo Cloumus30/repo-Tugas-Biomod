@@ -246,7 +246,7 @@ object Form1: TForm1
         Top = 158
         Width = 113
         Height = 25
-        Caption = 'Invers Filtering'
+        Caption = 'Error Exitation'
         Enabled = False
         TabOrder = 11
         OnClick = Button4Click
@@ -274,13 +274,13 @@ object Form1: TForm1
       object ListBox4: TListBox
         Left = 3
         Top = 552
-        Width = 121
+        Width = 230
         Height = 144
         ItemHeight = 13
         TabOrder = 14
       end
       object ListBox5: TListBox
-        Left = 130
+        Left = 258
         Top = 552
         Width = 121
         Height = 144

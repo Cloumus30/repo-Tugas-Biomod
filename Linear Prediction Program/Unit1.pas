@@ -83,6 +83,7 @@ begin
   num := length(Mat);
   num:=num-1;
   setlength(Inv,num,num);
+// Matrix indentity
   for i := 0 to num-1 do for j := 0 to num-1 do if i=j then Inv[i,j]:=1 else Inv[i,j] :=0;
 
   for k := 0 to num-1 do
@@ -232,6 +233,7 @@ begin
         for j:=0 to jumdat-1 do
         begin
             sum:=sum+ datInp[j]*datInp[j-i];
+//            ListBox4.Items.Add('index '+FloatToStr(j-i)+' dari data '+FloatToStr(datInp[j-i]))
         end;
         rxx[i]:=sum;
         rxx[-i]:=rxx[i];
@@ -330,8 +332,8 @@ begin
              sumReal:= sumReal - coefPredic[j-1]*cos(i*pi*j/jumdat);
              sumImaj:= sumImaj + coefPredic[j-1]*sin(i*pi*j/jumdat);
           end;
-          A_omega[i]:=sqrt(sqr(1-sumReal)+sqr(sumImaj)); //inverse Filter?
-          H_omega[i]:=1/A_omega[i]; //Predictor
+          A_omega[i]:=sqrt(sqr(1-sumReal)+sqr(sumImaj));
+          H_omega[i]:=1/A_omega[i];
           A_omegaSeries.AddXY(i/jumdat,A_omega[i]);
           H_omegaSeries.AddXY(i/jumdat,H_omega[i]);
       end;

@@ -400,7 +400,7 @@ begin
 //      Kondisi PVC
         if CheckBox1.Checked and (i>=fsecg) and (i<2*fsecg) or ((StrToInt(Edit27.Text)=1) and CheckBox1.Checked) then
         begin
-            // P
+            {// P
               teta_i[0]:=-60*pi/180;
               ai[0]:=1.2;
               bi[0]:=0.25;
@@ -419,7 +419,27 @@ begin
             // T
               teta_i[4]:=90*pi/180;
               ai[4]:=-7.85;
-              bi[4]:=0.4;
+              bi[4]:=0.4;}
+              // P
+              teta_i[0]:=-60*pi/180;
+              ai[0]:=0;
+              bi[0]:=0.2;
+            // Q
+              teta_i[1]:=-15*pi/180;
+              ai[1]:=-5;
+              bi[1]:=0.1;
+            // R
+              teta_i[2]:=0*pi/180;
+              ai[2]:=50;
+              bi[2]:=0.1;
+            // S
+              teta_i[3]:=15*pi/180;
+              ai[3]:=-50;
+              bi[3]:=0.05;
+            // T
+              teta_i[4]:=90*pi/180;
+              ai[4]:=-5;
+              bi[4]:=0.3;
 
         end
 //        Kondisi Normal
