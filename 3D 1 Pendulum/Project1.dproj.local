@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<BorlandProject>
-	<Transactions>
-    <Transaction>2020/12/11 14:18:28.000.487,=C:\Users\Cloudias\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2020/12/11 14:19:15.000.762,D:\kuliah\Tugas Program\repo Tugas Biomod\3D 1 Pendulum\Unit1.pas=C:\Users\Cloudias\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2020/12/11 14:19:15.000.762,D:\kuliah\Tugas Program\repo Tugas Biomod\3D 1 Pendulum\Unit1.dfm=C:\Users\Cloudias\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
-    <Transaction>2020/12/11 14:19:18.000.227,D:\kuliah\Tugas Program\repo Tugas Biomod\3D 1 Pendulum\Project1.dproj=C:\Users\Cloudias\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
-  </Transactions>
-</BorlandProject>

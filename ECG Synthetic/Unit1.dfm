@@ -1,9 +1,9 @@
 object Form1: TForm1
   Left = 0
   Top = 0
-  Caption = 'Form1'
+  Caption = 'ECG Synthetic'
   ClientHeight = 511
-  ClientWidth = 897
+  ClientWidth = 1111
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -24,18 +24,18 @@ object Form1: TForm1
   object PageControl1: TPageControl
     Left = 7
     Top = 7
-    Width = 897
+    Width = 1058
     Height = 497
-    ActivePage = TabSheet2
+    ActivePage = RR_Tachogram
     TabOrder = 0
     object RR_Tachogram: TTabSheet
       Caption = 'RR_Tachogram'
       object Label1: TLabel
         Left = 3
         Top = 8
-        Width = 59
+        Width = 50
         Height = 13
-        Caption = 'Jumlah Data'
+        Caption = 'Total Data'
       end
       object Label2: TLabel
         Left = 3
@@ -87,14 +87,14 @@ object Form1: TForm1
         Caption = 'C2'
       end
       object Label9: TLabel
-        Left = 184
+        Left = 200
         Top = 3
-        Width = 47
+        Width = 46
         Height = 13
-        Caption = 'ratio Tau:'
+        Caption = 'Ratio Tau'
       end
       object Label10: TLabel
-        Left = 237
+        Left = 253
         Top = 3
         Width = 6
         Height = 13
@@ -128,6 +128,48 @@ object Form1: TForm1
         Height = 13
         Caption = 'Heart rate mean'
       end
+      object Hz: TLabel
+        Left = 182
+        Top = 34
+        Width = 12
+        Height = 13
+        Caption = 'Hz'
+      end
+      object Label28: TLabel
+        Left = 182
+        Top = 116
+        Width = 12
+        Height = 13
+        Caption = 'Hz'
+      end
+      object Label29: TLabel
+        Left = 182
+        Top = 143
+        Width = 12
+        Height = 13
+        Caption = 'Hz'
+      end
+      object Label30: TLabel
+        Left = 182
+        Top = 170
+        Width = 12
+        Height = 13
+        Caption = 'Hz'
+      end
+      object Label31: TLabel
+        Left = 182
+        Top = 197
+        Width = 12
+        Height = 13
+        Caption = 'Hz'
+      end
+      object Label32: TLabel
+        Left = 191
+        Top = 287
+        Width = 20
+        Height = 13
+        Caption = 'bpm'
+      end
       object Button1: TButton
         Left = 3
         Top = 221
@@ -143,7 +185,7 @@ object Form1: TForm1
         Width = 97
         Height = 21
         TabOrder = 1
-        Text = '1000'
+        Text = '256'
       end
       object Edit2: TEdit
         Left = 68
@@ -276,19 +318,31 @@ object Form1: TForm1
       object Chart3: TChart
         Left = -4
         Top = 317
-        Width = 429
+        Width = 477
         Height = 149
+        Legend.CheckBoxes = True
         Title.Text.Strings = (
-          'RR-Tachogram')
-        BottomAxis.Title.Caption = 'sample (n)'
+          'Random Phase ')
+        BottomAxis.Title.Caption = 'frequency(Hz)'
         LeftAxis.Title.Caption = 'Amplitudo(mV)'
         View3D = False
         TabOrder = 13
         DefaultCanvas = 'TGDIPlusCanvas'
         ColorPaletteIndex = 13
         object Series3: TLineSeries
-          Legend.Visible = False
-          ShowInLegend = False
+          Legend.Text = 'Real'
+          LegendTitle = 'Real'
+          Brush.BackColor = clDefault
+          Pointer.InflateMargins = True
+          Pointer.Style = psRectangle
+          XValues.Name = 'X'
+          XValues.Order = loAscending
+          YValues.Name = 'Y'
+          YValues.Order = loNone
+        end
+        object Series9: TLineSeries
+          Legend.Text = 'Imaj'
+          LegendTitle = 'Imaj'
           Brush.BackColor = clDefault
           Pointer.InflateMargins = True
           Pointer.Style = psRectangle
@@ -317,12 +371,13 @@ object Form1: TForm1
         Text = '2'
       end
       object Chart4: TChart
-        Left = 431
+        Left = 479
         Top = 317
-        Width = 429
+        Width = 546
         Height = 149
+        Legend.CheckBoxes = True
         Title.Text.Strings = (
-          'RR-Tachogram setelah random seed number')
+          'RR-Tachogram')
         BottomAxis.Title.Caption = 'sample (n)'
         LeftAxis.Title.Caption = 'Amplitudo(mV)'
         View3D = False
@@ -330,8 +385,19 @@ object Form1: TForm1
         DefaultCanvas = 'TGDIPlusCanvas'
         ColorPaletteIndex = 13
         object Series4: TLineSeries
-          Legend.Visible = False
-          ShowInLegend = False
+          Legend.Text = 'before offset'
+          LegendTitle = 'before offset'
+          Brush.BackColor = clDefault
+          Pointer.InflateMargins = True
+          Pointer.Style = psRectangle
+          XValues.Name = 'X'
+          XValues.Order = loAscending
+          YValues.Name = 'Y'
+          YValues.Order = loNone
+        end
+        object Series8: TLineSeries
+          Legend.Text = 'after offset'
+          LegendTitle = 'after offset'
           Brush.BackColor = clDefault
           Pointer.InflateMargins = True
           Pointer.Style = psRectangle
@@ -361,23 +427,23 @@ object Form1: TForm1
         Caption = 'fecg'
       end
       object Label25: TLabel
-        Left = 22
+        Left = 54
         Top = 306
-        Width = 86
+        Width = 26
         Height = 13
-        Caption = 'jumlah gelombang'
+        Caption = 'Cycle'
       end
       object Label26: TLabel
         Left = 232
         Top = 266
-        Width = 63
+        Width = 86
         Height = 13
-        Caption = 'Jumlah Data:'
+        Caption = 'Total Data of ECG'
       end
       object Label27: TLabel
-        Left = 297
+        Left = 324
         Top = 266
-        Width = 6
+        Width = 5
         Height = 13
         Caption = '0'
       end
@@ -386,7 +452,7 @@ object Form1: TForm1
         Top = 16
         Width = 278
         Height = 241
-        Caption = 'GroupBox1'
+        Caption = 'Parameter'
         TabOrder = 0
         object Label16: TLabel
           Left = 3
@@ -618,9 +684,10 @@ object Form1: TForm1
         Top = 3
         Width = 537
         Height = 254
+        Legend.CheckBoxes = True
         Title.Text.Strings = (
-          'Hasil ECG')
-        BottomAxis.Title.Caption = 'time (second)'
+          'ECG')
+        BottomAxis.Title.Caption = 'time (s)'
         LeftAxis.Title.Caption = 'Amplitudo (mV)'
         View3D = False
         Zoom.Animated = True
@@ -631,6 +698,7 @@ object Form1: TForm1
         object Series5: TLineSeries
           Legend.Text = 'x'
           LegendTitle = 'x'
+          Active = False
           Brush.BackColor = clDefault
           Pointer.InflateMargins = True
           Pointer.Style = psRectangle
@@ -642,6 +710,7 @@ object Form1: TForm1
         object Series6: TLineSeries
           Legend.Text = 'y'
           LegendTitle = 'y'
+          Active = False
           Brush.BackColor = clDefault
           Pointer.InflateMargins = True
           Pointer.Style = psRectangle
@@ -671,28 +740,12 @@ object Form1: TForm1
         TabOrder = 2
         OnClick = Button3Click
       end
-      object ListBox1: TListBox
-        Left = 382
-        Top = 318
-        Width = 121
-        Height = 97
-        ItemHeight = 13
-        TabOrder = 3
-      end
-      object ListBox2: TListBox
-        Left = 517
-        Top = 318
-        Width = 121
-        Height = 97
-        ItemHeight = 13
-        TabOrder = 4
-      end
       object Edit26: TEdit
         Left = 125
         Top = 263
         Width = 84
         Height = 21
-        TabOrder = 5
+        TabOrder = 3
         Text = '256'
       end
       object Edit27: TEdit
@@ -700,7 +753,7 @@ object Form1: TForm1
         Top = 303
         Width = 84
         Height = 21
-        TabOrder = 6
+        TabOrder = 4
         Text = '2'
       end
       object CheckBox1: TCheckBox
@@ -709,7 +762,7 @@ object Form1: TForm1
         Width = 97
         Height = 17
         Caption = 'PVC'
-        TabOrder = 7
+        TabOrder = 5
         OnClick = CheckBox1Click
       end
     end

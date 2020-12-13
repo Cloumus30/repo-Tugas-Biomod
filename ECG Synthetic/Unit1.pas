@@ -78,10 +78,8 @@ type
     Chart5: TChart;
     Series5: TLineSeries;
     Button3: TButton;
-    ListBox1: TListBox;
     Series6: TLineSeries;
     Series7: TLineSeries;
-    ListBox2: TListBox;
     Edit26: TEdit;
     Edit27: TEdit;
     Label24: TLabel;
@@ -89,6 +87,14 @@ type
     Label26: TLabel;
     Label27: TLabel;
     CheckBox1: TCheckBox;
+    Series8: TLineSeries;
+    Series9: TLineSeries;
+    Hz: TLabel;
+    Label28: TLabel;
+    Label29: TLabel;
+    Label30: TLabel;
+    Label31: TLabel;
+    Label32: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure mayerrsa;
     procedure FormCreate(Sender: TObject);
@@ -209,9 +215,9 @@ begin
       for i:=0 to 4 do
       begin
         tetamin:=(teta-teta_i[i]);
-//        delTeta:= modulus(tetamin,2*pi);
+        delTeta:= modulus(tetamin,2*pi);
 //        ListBox2.Items.Add('modulus: '+FloatToStr(delTeta));
-        delTeta:=modulo(tetamin,2*pi)-pi;
+//        delTeta:=modulo(tetamin,2*pi)-pi;
 //        ListBox1.Items.Add('modulo: '+FloatToStr(delTeta));
 
         sum:=sum+-ai[i]*delTeta*exp(-0.5*sqr(delTeta)/sqr(bi[i]))-1*(z-z0);
@@ -243,7 +249,9 @@ var
   sfre,sfim:arrextend;
 begin
     Series3.Clear;
+    Series8.Clear;
     Series4.Clear;
+    Series9.Clear;
     scal:=StrToFloat(Edit10.Text);
     hrmean:=StrToFloat(edit9.Text);
     SetLength(sfre,jumdat);
@@ -253,19 +261,22 @@ begin
         fase:=Random*2*pi;
         sfre[i]:= sf[i]*cos(fase);
         sfim[i]:= sf[i]*sin(fase);
+        Series3.AddXY(i/jumdat,sfre[i]);
+        Series9.AddXY(i/jumdat,sfim[i]);
       end;
     tacho:=IDFT(sfre,sfim,jumdat);
     for i := 0 to jumdat-1 do
       begin
-        Series3.AddXY(i,tacho[i]);
+        Series4.AddXY(i,tacho[i]);
       end;
 
     offset:= 60/hrmean;
+    scal:= StrToFloat(Edit10.Text);
     Label13.Caption:=FloatToStr(offset);
     for i := 0 to jumdat-1 do
       begin
-        tacho[i]:= (tacho[i]*2)+offset;
-        Series4.AddXY(i,tacho[i]);
+        tacho[i]:= (tacho[i]*scal)+offset;
+        Series8.AddXY(i,tacho[i]);
       end;
     SetLength(w,Length(tacho));
     for i := 0 to jumdat-1 do
@@ -392,7 +403,8 @@ begin
     wind:=0;
     RK4x[0] := 0.1;
     Rk4y[0] := 0.0;
-    Rk4z[0] := 0.0;
+    Rk4z[0] := 0.04;
+//    Rk4z[0]:=0.0;
     h:=1/fsecg;
 
     for i := 0 to jumecg-1 do
@@ -400,7 +412,7 @@ begin
 //      Kondisi PVC
         if CheckBox1.Checked and (i>=fsecg) and (i<2*fsecg) or ((StrToInt(Edit27.Text)=1) and CheckBox1.Checked) then
         begin
-            {// P
+{            // P
               teta_i[0]:=-60*pi/180;
               ai[0]:=1.2;
               bi[0]:=0.25;
@@ -419,7 +431,8 @@ begin
             // T
               teta_i[4]:=90*pi/180;
               ai[4]:=-7.85;
-              bi[4]:=0.4;}
+              bi[4]:=0.4;  }
+
               // P
               teta_i[0]:=-60*pi/180;
               ai[0]:=0;
@@ -487,8 +500,8 @@ begin
         RK4y[i+1]:=RK4y[i]+(h/6)*(ky[1]+2*ky[2]+2*ky[3]+ky[4]);
         RK4z[i+1]:=RK4z[i]+(h/6)*(kz[1]+2*kz[2]+2*kz[3]+kz[4]);
 
-//        Series5.AddXY(i/fs,RK4x[i]);
-//        Series6.AddXY(i/fs,RK4y[i]);
+        Series5.AddXY(i/fs,RK4x[i]);
+        Series6.AddXY(i/fs,RK4y[i]);
         Series7.AddXY(i/fs,RK4z[i]);
 
         wind:=wind+round(i/fs);

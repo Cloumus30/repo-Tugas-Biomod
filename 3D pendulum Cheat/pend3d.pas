@@ -14,15 +14,7 @@ type
     Timer2: TTimer;
     Chart1: TChart;
     Series1: TLineSeries;
-    Series2: TLineSeries;
     Button2: TButton;
-    GroupBox1: TGroupBox;
-    SpinEdit1: TSpinEdit;
-    Label1: TLabel;
-    SpinEdit2: TSpinEdit;
-    SpinEdit3: TSpinEdit;
-    Label2: TLabel;
-    Label3: TLabel;
     Timer3: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -32,9 +24,6 @@ type
     procedure Timer2Timer(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Basics(Sender: TObject);
-    procedure SpinEdit1Change(Sender: TObject);
-    procedure SpinEdit2Change(Sender: TObject);
-    procedure SpinEdit3Change(Sender: TObject);
 
   private
     { Private declarations }
@@ -257,15 +246,14 @@ rotangle:=0;
 rotangle1:=0;
 rotangle2:=0;
 rotangle3:=0;
-xpos:=-1;
-ypos:=0;
+xpos:=4;
+ypos:=2.5;
 zpos:=-10;
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
  series1.Clear;
- series2.clear;
 
  timer1.Enabled:=true;
  timer2.enabled:=true;
@@ -308,6 +296,7 @@ begin
 //   series1.addxy(time,rotangle);
 //   series2.addxy(time,rotangle3);
 //   xpos:= xpos+0.005*cos(rotangle*pi/180);
+
       rungekutta_single(theta,thetadot,phi,phidot);
       rotangle:= theta*50;
       series1.addxy(time,rotangle);
@@ -329,21 +318,6 @@ begin
  upperlimb:=false;
  timer1.enabled:=true;
  timer2.Enabled:=true;
-end;
-
-procedure TForm1.SpinEdit1Change(Sender: TObject);
-begin
- pitch:=spinedit1.value;
-end;
-
-procedure TForm1.SpinEdit2Change(Sender: TObject);
-begin
- yaw:=spinedit2.Value;
-end;
-
-procedure TForm1.SpinEdit3Change(Sender: TObject);
-begin
- roll:=spinedit3.value;
 end;
 
 
